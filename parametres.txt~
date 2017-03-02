@@ -1,0 +1,94 @@
+##############################
+#   parameters file loaded   #
+##############################
+
+#KC# boolean to know if network analyse of all GPCR structures must be done (if False for one_cloud_graph, graph for each structure will be done)
+GPCR_structures_test	False
+GPCR_structures_path	/home/ckaren/Documents/ICM/icm-browser-pro-3.8-3/GPCRDock2010
+
+#KC#CG# name and filename of the query sequence which must be modeled
+sequence_name		orexin
+sequence_filename	orexin.fasta
+
+#KC#CG# pdb name of the template which allows the modelisation
+pdb_template		4GRV
+
+#KC# pdb name of the real structure of the query sequence
+pdb_query_structure	4S0V
+
+#KC#CG# numbers of models and processus (1 and 1 by default)
+n_models		1
+n_proc			2
+
+#KC# boolean to know if alignment must be done or already in the work folder
+alignment		False
+
+#KC# optimization boolean and parameters (probabilities in percent !)
+optimization		False
+p_min			20
+p_max			80
+p_step			20
+ASA_per			30
+
+#KC# number of models and criteria for selection (RMSD_VS_query_structure, RMSD_VS_template, number_Hbonds_core, length_network_core or number_residues_core)
+N_models		5
+selection_criteria	RMSD_VS_query_structure
+
+#KC#CG# position of the different transmembrane helices (start=pivot-d1/end=pivot+d2)
+#CG# 	TMn	pivot	d1	d2
+	TM1	23	15	14
+	TM2	57	15	15
+	TM3	99	18	18
+	TM4	138	8	8
+	TM5	149	2	2
+	TM6	164	1	1
+	TM7	182	8	8
+	TM8	230	16	16
+	TM9	270	17	17
+
+
+#KC# actions to realise
+#######################
+# Protocol to follow  #
+#######################
+
+
+##################################################################################################################################
+#CG#	action		translation		selection			direction			distance	 #
+#CG#					   (TMx, res, protein)		(TMy, protein or center)	(negative value possible)#
+##################################################################################################################################
+#	action		translation		TM1				TM6				30
+#	action		translation		res:28:56			protein 			3
+#	action		translation		TM2     			protein 			3
+#	action		translation		protein     			center	 			50
+
+######################################################################################################################################################################################
+#CG#	action		rotation		selection					axe  				angle				pivot		     #
+#CG#					   (TMx, res, protein)			(TMy, protein, TMy_perp or protein_perp)			    (atom_name:res_number:chain_name)#
+######################################################################################################################################################################################
+#	action		rotation		protein						protein				90				CA:100:A
+#	action		rotation		TM1						protein				90				CA:100:A
+#	action		rotation		protein						TM2				90				CA:100:A
+#	action		rotation		res:28:56					TM2_perp			90				CA:100:A
+#CG#								   	  	   XXX_perp means the normal of helix
+
+####################################################################################################################################################################################
+#KC#	action		restraint		type			 atom1			 atom2			  				parameters		   #
+#KC#	action		modelisation	    with_restraint (both lines needed)													   #
+####################################################################################################################################################################################
+#	action  	restraint		distance	   	CA:100:A		CA:200:A				  10	0.1 (distance and standard deviation)
+#	action		modelisation	    with_restraint
+#	action  	restraint		sheet   		CA:100:A		CA:200:A				  5	    (number of HBOND and sign for
+#	action		modelisation	    with_restraint
+#	action  	restraint		sheet   		CA:2:A			CA:10:A				 	 -5	     parralel or antiparallel)
+#	action		modelisation	    with_restraint
+#	action  	restraint		helix   		CA:100:A		CA:200:A	
+#	action		modelisation	    with_restraint
+#	action  	restraint		strand  		100			200
+#	action		modelisation	    with_restraint
+
+#################################################################
+#KC#	action		modelisation		type		#
+#################################################################
+#	action		modelisation	avec_repliement_terminus
+

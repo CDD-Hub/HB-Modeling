@@ -1,0 +1,31 @@
+class my_model:
+
+    def find_secondary_structure(self):  
+    def orient_protein(self):
+    def calc_box_size(self, _type="helix"):
+    def search_top_down(self):
+    def color_conservation(self):
+    def search_zones(self):
+    def color_zones(self):
+    def find_don_acc(self):
+    def find_ionic_don_acc(self):
+    def color_conservation(self):
+    def ASA_calcul(self, sequence_name=None):
+    def search_core(self):
+    def color_core(self):    
+    def get_RMSD_template(self, template):    
+    def get_RMSD_query_structure(self, query_structure):    
+    def structure_alignement(self, model_ref):
+
+class interactions:
+    
+    def find_SS_bridges(self):
+    def search_H_bond(self):
+    def search_H_bond_core(self, res_core):
+    def search_stacking(self):
+    def search_network(self, list_couple, _type):
+    def network_distribution(self, _type):
+    def select_to_color_network(self, networks, _type):
+    def color_network(self, net_to_color, _type, typ):
+    def accessibility_VS_Hbond(self):
+

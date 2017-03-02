@@ -1,0 +1,123 @@
+#!/usr/bin/env Rscript
+
+args <- commandArgs(TRUE) 
+
+png(filename="Hbond_network_test.png", width=600, height=600)
+data<-read.table(paste(args[1], "network_distribution_Hbond_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+data<-data[,-1]
+line1<-unlist(data[1,])
+plot(line1, xlim=c(1, ncol(data)), ylim=c(0,50), xlab = "networks", ylab = "number of residues for each network", col="forestgreen")
+for (i in 2:nrow(data)){
+	line<-unlist(data[i,])
+	points(line, col=124)
+}
+dev.off()
+
+png(filename="Hbond_network_test_norm.png", width=600, height=600)
+data<-read.table(paste(args[1], "network_distribution_Hbond_test_norm.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+data<-data[,-1]
+line1<-unlist(data[1,])
+plot(line1, xlim=c(1, ncol(data)), ylim=c(0,50), xlab = "networks", ylab = "number of residues for each network", col="forestgreen")
+for (i in 2:nrow(data)){
+	line<-unlist(data[i,])
+	points(line, col=124)
+}
+dev.off()
+
+########################################################################
+#for aromatic network : just change filename and txt file in read.table#
+########################################################################
+
+#function to realize the graph
+access_graph <- function(x)
+{
+max_bonds_donor=3
+max_bonds_acceptor=2
+
+line1_access<-unlist(data[1,])
+line1_access30<-replace(line1_access, which(line1_access > 30), NA)
+line1_Hbond_count<-unlist(data2[1,])
+max_Hbond=max(line1_Hbond_count, na.rm = TRUE)
+for (i in 1:length(line1_access)) { 
+	if (is.na(line1_access30[i])) {
+		line1_Hbond_count[i] = NA
+	}
+}
+if (x=="MC_A") {
+	plot(line1_access30, line1_Hbond_count, ylim=c(0,max_bonds_acceptor), xlab = "surface accessibility of the main chain (%)", ylab = "number of hydrogen bonds for each acceptor (% on the RIGHT)", col="forestgreen")
+} else {
+	if (x=="PSC_A") {
+		plot(line1_access30, line1_Hbond_count, ylim=c(0,max_bonds_acceptor), xlab = "surface accessibility of the polar side chain (%)", ylab = "number of hydrogen bonds for each acceptor (% on the RIGHT)", col="forestgreen")
+	} else {
+		if (x=="MC_D") {
+			plot(line1_access30, line1_Hbond_count, ylim=c(0,max_bonds_donor), xlab = "surface accessibility of the main chain (%)", ylab = "number of hydrogen bonds for each donor (% on the RIGHT)", col="forestgreen")
+		} else {
+			plot(line1_access30, line1_Hbond_count, ylim=c(0,max_bonds_donor), xlab = "surface accessibility of the polar side chain (%)", ylab = "number of hydrogen bonds for each donor (% on the RIGHT)", col="forestgreen")
+		}
+	}
+}
+for (i in 2:nrow(data)){
+	line_access<-unlist(data[i,])
+	line_access30<-replace(line_access, which(line_access > 30), NA)
+	line_Hbond_count<-unlist(data2[i,])
+	if (max(line_Hbond_count, na.rm = TRUE) > max_Hbond){
+		max_Hbond=max(line_Hbond_count, na.rm = TRUE)
+	}
+	points(line_access30, line_Hbond_count, col="forestgreen")
+}
+percent <- vector("numeric", max_Hbond+1)
+for (i in 1:nrow(data2)){
+	for (j in 0:max_Hbond+1) {
+		percent[j]=percent[j]+sum(data2[i,]==j-1, na.rm = TRUE)
+	}
+}
+percent <- round(percent/sum(percent, na.rm = TRUE)*100, 2)
+axis(4, at=0:max_Hbond, labels=percent)
+}
+
+png(filename="MC_access_VS_Hbond_acceptor_test.png", width=600, height=600)
+data<-read.table(paste(args[1], "MC_access_VS_Hbond_acceptor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+data2<-read.table(paste(args[1], "Hbond_count_acceptor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+access_graph("MC_A")
+dev.off()
+
+png(filename="PSC_access_VS_Hbond_acceptor_test.png", width=600, height=600)
+data<-read.table(paste(args[1], "PSC_access_VS_Hbond_acceptor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+data2<-read.table(paste(args[1], "Hbond_count_acceptor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+access_graph("PSC_A")
+dev.off()
+
+png(filename="MC_access_VS_Hbond_donor_test.png", width=600, height=600)
+data<-read.table(paste(args[1], "MC_access_VS_Hbond_donor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+data2<-read.table(paste(args[1], "Hbond_count_donor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+access_graph("MC_D")
+dev.off()
+
+png(filename="PSC_access_VS_Hbond_donor_test.png", width=600, height=600)
+data<-read.table(paste(args[1], "PSC_access_VS_Hbond_donor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+data2<-read.table(paste(args[1], "Hbond_count_donor_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+access_graph("PSC_D")
+dev.off()
+
+#Figure x : Number of residues in each hydrogen bond network, in descending order, normalized by the sum of acceptors and donors, for all the GPCR Dock structures
+#Figure x : Number of hydrogen bonds and percentage for each acceptor in the protein core according to the surface accessibility of the main chain, for all the GPCR Dock structures
+#Figure x : Number of hydrogen bonds and percentage for each acceptor in the protein core according to the surface accessibility of the polar side chain, for all the GPCR Dock structures
+#Figure x : Number of hydrogen bonds and percentage for each donor in the protein core according to the surface accessibility of the main chain, for all the GPCR Dock structures
+#Figure x : Number of hydrogen bonds and percentage for each donor in the protein core according to the surface accessibility of the polar side chain, for all the GPCR Dock structures
+
+png(filename="Hbonds_dist_all.png", width=600, height=600)
+data<-read.table(paste(args[1], "Hbonds_dist_test.txt", sep="/"), sep="_", fill=TRUE, row.names=NULL)
+data<-data[,-1]
+
+mat<-matrix(0, nrow=nrow(data), ncol=max(data, na.rm = TRUE)+1)
+for (i in 1:nrow(data)) {
+	line=unlist(data[i,])
+	for (j in 0:max(line, na.rm = TRUE)+1) {
+		mat[i,j]=sum(line==j-1, na.rm = TRUE)
+	}
+}
+names <- seq(0,max(data, na.rm = TRUE),1)
+boxplot(mat, ylim=c(0,500), xlab="number of hydrogen bonds", ylab="number of donor", names=names, col="forestgreen")
+dev.off()
+
+

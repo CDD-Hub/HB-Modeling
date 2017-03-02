@@ -1,0 +1,19 @@
+#!/usr/bin/env Rscript
+
+args <- commandArgs(TRUE) 
+data <- as.numeric(unlist(strsplit(args[1],"_")))
+png(filename=args[2])
+if (args[3]=="molpdf") {
+	plot(data, main = "molpdf score evolution during optimisation cycles", xlab = "cycles", ylab = "molpdf score value")
+} else {
+	if (args[3]=="DOPE") {
+		plot(data, main = "DOPE score evolution during optimisation cycles", xlab = "cycles", ylab = "DOPE score value")
+	} else {
+		if (args[3]=="GA341") {
+			plot(data, main = "GA341 score evolution during optimisation cycles", xlab = "cycles", ylab = "GA341 score value")
+		} else {
+			plot(data, main = "RMSD score evolution during optimisation cycles", xlab = "cycles", ylab = "RMSD score value")
+		}
+	}
+}
+dev.off()
