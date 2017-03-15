@@ -1,2 +1,2 @@
 # HB-Modeling
-HB Modeling to optimise Homology modeling
+Hydrogen bond Modeling to optimise Homology modeling
